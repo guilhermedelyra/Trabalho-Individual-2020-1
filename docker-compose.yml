@@ -1,0 +1,37 @@
+version: "3.8"
+
+services:
+  api:
+    build: 
+      context: .
+      dockerfile: ./api/Dockerfile
+    container_name: ${APP_NAME}
+    ports:
+      - ${APP_PORT}:${APP_PORT}
+    volumes:
+      - ./api:/opt/app
+      - gem_cache:/usr/local/bundle/gems
+      # - node_modules:/opt/app/api/node_modules
+    depends_on:
+      - api-db
+    env_file: .env
+    environment:
+      RAILS_ENV: development
+
+  api-db:
+    image: postgres
+    container_name: ${DATABASE_HOST}
+    ports:
+      - ${DATABASE_PORT}:${DATABASE_PORT}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./api/log/db:/logs
+    env_file: .env
+    environment:
+      - POSTGRES_USER=${DATABASE_USER}
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+
+volumes:
+  gem_cache:
+  db_data:
+  # node_modules:
