@@ -13,7 +13,7 @@ services:
       - node_modules:/opt/app/client/node_modules
     env_file: .env
     environment:
-      CLIENT_MODE: ${CLIENT_MODE}
+      NODE_ENV: ${NODE_ENV}
 
   api:
     build: 

@@ -1,15 +1,17 @@
 #!/bin/bash
 set -e
 
-if [ "$CLIENT_MODE" = "build" ]
+yarn install
+
+if [ "$NODE_ENV" = "build" ]
 then
     yarn build
-elif [ "$CLIENT_MODE" = "test" ]
+elif [ "$NODE_ENV" = "test" ]
 then
     yarn test:unit
-elif [ "$CLIENT_MODE" = "dev" ]
+elif [ "$NODE_ENV" = "development" ]
 then
     yarn dev
 else
-    echo "Unknown CLIENT_MODE value..."
+    echo "Unknown NODE_ENV value..."
 fi
