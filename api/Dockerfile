@@ -10,6 +10,7 @@ RUN gem install bundler
 RUN bundle config build.nokogiri --use-system-libraries
 RUN bundle check || bundle install
 
-COPY ./api/entrypoint.sh /usr/bin/
-RUN chmod +x /usr/bin/entrypoint.sh
-ENTRYPOINT ["entrypoint.sh"]
+COPY ./api/entrypoint.sh /usr/bin/entrypoint_api.sh
+RUN chmod +x /usr/bin/entrypoint_api.sh
+
+ENTRYPOINT ["entrypoint_api.sh"]
