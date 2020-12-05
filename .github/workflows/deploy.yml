@@ -21,6 +21,5 @@ jobs:
       
       - name: test_client
         run: docker-compose run -e "NODE_ENV=test" --rm client
-
-      
+     
   

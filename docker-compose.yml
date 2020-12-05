@@ -1,20 +1,6 @@
 version: "3.8"
 
 services:
-  client:
-    build: 
-      context: .
-      dockerfile: ./client/Dockerfile
-    container_name: ${APP_CLIENT_NAME}
-    ports:
-      - ${APP_CLIENT_PORT}:${APP_CLIENT_PORT}
-    volumes:
-      - ./client:/opt/app
-      - node_modules:/opt/app/client/node_modules
-    env_file: .env
-    environment:
-      NODE_ENV: ${NODE_ENV}
-
   api:
     build: 
       context: .
@@ -23,13 +9,15 @@ services:
     ports:
       - ${APP_API_PORT}:${APP_API_PORT}
     volumes:
-      - ./api:/opt/app
+      - ./api:/opt/app/api
       - gem_cache:/usr/local/bundle/gems
     depends_on:
       - api-db
     env_file: .env
     environment:
       RAILS_ENV: ${RAILS_ENV}
+    networks:
+      - app_network
 
   api-db:
     image: postgres
@@ -43,8 +31,27 @@ services:
     environment:
       - POSTGRES_USER=${DATABASE_USER}
       - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+    networks:
+      - app_network
+
+  client:
+    build: 
+      context: .
+      dockerfile: ./client/Dockerfile
+    container_name: ${APP_CLIENT_NAME}
+    ports:
+      - ${APP_CLIENT_PORT}:${APP_CLIENT_PORT}
+    volumes:
+      - ./client:/opt/app/client
+      - node_modules:/opt/app/client/node_modules  
+    env_file: .env
+    environment:
+      NODE_ENV: ${NODE_ENV}
+
+networks:
+  app_network:
 
 volumes:
   gem_cache:
   db_data:
-  node_modules:
+  node_modules:  

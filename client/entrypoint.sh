@@ -1,8 +1,6 @@
 #!/bin/bash
 set -e
 
-yarn install
-
 if [ "$NODE_ENV" = "build" ]
 then
     yarn build
