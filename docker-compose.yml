@@ -25,7 +25,6 @@ services:
     volumes:
       - ./api:/opt/app
       - gem_cache:/usr/local/bundle/gems
-      # - node_modules:/opt/app/api/node_modules
     depends_on:
       - api-db
     env_file: .env
