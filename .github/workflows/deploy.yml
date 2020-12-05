@@ -1,0 +1,31 @@
+name: ci/cd deploy
+
+on:
+  push: # any branch
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+    name: ci
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: build
+        run: docker-compose up --build -d
+
+  test:
+    name: tests
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: test_api
+        run: docker-compose run -e "RAILS_ENV=test" --rm api
+      
+      - name: test_client
+        run: docker-compose run -e "CLIENT_MODE=test" --rm client
+   

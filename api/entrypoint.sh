@@ -7,18 +7,12 @@ rm -rf /opt/app/tmp/pids/server.pid
 rake db:create
 rake db:migrate 
 
-# if db_version=$(rake db:version 2>/dev/null)
-# then
-#     if [ "$db_version" = "Current version: 0" ]
-#     then
-#         echo "DB is empty"
-#         rake db:migrate 
-#     else
-#         echo "DB exists"
-#     fi
-# else
-#     echo "DB does not exist, creating it"
-#     rake db:migrate 
-# fi
-
-rails server -p 3000 -b 0.0.0.0
+if [ "$RAILS_ENV" = "development" ]
+then
+    rails server -p 3000 -b 0.0.0.0
+elif [ "$RAILS_ENV" = "test" ]
+then
+    rake test
+else
+    echo "Unknown RAILS_ENV value..."
+fi
