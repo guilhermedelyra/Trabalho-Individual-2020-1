@@ -11,5 +11,6 @@ elif [ "$NODE_ENV" = "development" ]
 then
     yarn dev
 else
-    echo "Unknown NODE_ENV value..."
+    echo "Unknown NODE_ENV value... serving it anyway"
+    yarn serve
 fi
