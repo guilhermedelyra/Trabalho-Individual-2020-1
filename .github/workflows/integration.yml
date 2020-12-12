@@ -7,28 +7,37 @@ on:
       - master
 
 jobs:
-  build:
-    name: CI
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: build
-        run: docker-compose build
- 
   test:
-    name: Test front & back
+    name: CI  &&  Test front/back  &&  Coverage
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: directory          
+        run: ls -a          
 
       - name: build
         run: docker-compose up --build -d
 
       - name: test_api
-        run: docker-compose run -e "RAILS_ENV=test" --rm api
+        run: docker-compose run -e "RAILS_ENV=test" api
       
       - name: test_client
-        run: docker-compose run -e "NODE_ENV=test" --rm client
-     
-  
+        run: docker-compose run -e "NODE_ENV=test" client
+
+      - name: retrieve client coverage
+        run: |
+          sudo docker cp client:/opt/app/client/coverage client/coverage
+          ls client
+
+      - name: retrieve api coverage
+        run: |
+          sudo docker cp api:/opt/app/api/coverage api/coverage
+          ls api
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}        
