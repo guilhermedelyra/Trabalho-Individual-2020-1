@@ -1,25 +1,17 @@
-name: ci/cd deploy
+name: Push api to Heroku
 
-on:
-  push: # any branch
-  pull_request:
-    branches:
-      - master
+on: [push]
 
-jobs:      
-  build:
-    name: ci
+jobs:
+  deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-
-      - name: build
-        run: docker-compose up --build -d
-
-      - name: test_api
-        run: docker-compose run -e "RAILS_ENV=test" --rm api
-      
-      - name: test_client
-        run: docker-compose run -e "NODE_ENV=test" --rm client
-     
-  
+    - uses: actions/checkout@v2
+    - name: Release API
+      uses: akhileshns/heroku-deploy@v3.0.4
+      with:
+        heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+        heroku_app_name: "backend-gces"
+        heroku_email: "guilyra12@gmail.com"
+      env:
+        HD_APP_BASE: "api"
