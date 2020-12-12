@@ -40,4 +40,14 @@ jobs:
         uses: SonarSource/sonarcloud-github-action@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}        
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+      - name: Test & publish code coverage
+        uses: paambaati/codeclimate-action@v2.7.5
+        env:
+          CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
+        with:
+          coverageLocations: |
+            ${{github.workspace}}/client/coverage/lcov.info:lcov
+            ${{github.workspace}}/api/coverage/.resultset.json:simplecov
+                    
