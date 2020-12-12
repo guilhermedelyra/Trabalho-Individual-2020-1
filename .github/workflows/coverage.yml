@@ -1,0 +1,80 @@
+
+name: coverage
+
+# tho i could push those containers built at the integration job
+# and then use them as containers images for the coverage job
+# i prefer not to, since docker is currently limiting pulls and pushes, so idk
+
+on:
+  push: # any branch
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  coverage:
+    name: Test front/back && Coverage
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_PASSWORD: password
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 14.x
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '2.5.7'
+
+      - name: retrieve client coverage
+        env:
+          NODE_ENV: test
+        run: |
+          yarn install
+          yarn test:unit
+        working-directory: client
+
+      - name: retrieve api coverage
+        env:
+          DATABASE_HOST: localhost
+          DATABASE_PORT: 5432
+          DATABASE_USER: postgres
+          DATABASE_PASSWORD: password
+          RAILS_ENV: test
+        run: |
+          sudo apt-get -yqq install libpq-dev
+          gem install bundler
+          bundle install --jobs 4 --retry 3
+          bundle exec rails db:create
+          bundle exec rails db:migrate
+          bundle exec rails test
+        working-directory: api
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+      - name: CodeClimate - publish Coverage
+        uses: paambaati/codeclimate-action@v2.7.5
+        env:
+          CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
+        with:
+          coverageLocations: |
+            ${{github.workspace}}/client/coverage/lcov.info:lcov
+            ${{github.workspace}}/api/coverage/.resultset.json:simplecov
+                    

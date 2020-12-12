@@ -1,5 +1,9 @@
 name: ci/cd deploy
 
+# tho i could push those containers built at the integration job
+# and then use them as containers images for the coverage job
+# i prefer not to, since docker is currently limiting pulls and pushes, so idk
+
 on:
   push: # any branch
   pull_request:
@@ -7,13 +11,12 @@ on:
       - master
 
 jobs:
-  test:
-    name: CI  &&  Test front/back  &&  Coverage
+  integration:
+    name: CI  &&  Test inside docker
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
+
       - name: directory          
         run: ls -a          
 
@@ -26,28 +29,3 @@ jobs:
       - name: test_client
         run: docker-compose run -e "NODE_ENV=test" client
 
-      - name: retrieve client coverage
-        run: |
-          sudo docker cp client:/opt/app/client/coverage client/coverage
-          ls client
-
-      - name: retrieve api coverage
-        run: |
-          sudo docker cp api:/opt/app/api/coverage api/coverage
-          ls api
-
-      - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
-      - name: Test & publish code coverage
-        uses: paambaati/codeclimate-action@v2.7.5
-        env:
-          CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
-        with:
-          coverageLocations: |
-            ${{github.workspace}}/client/coverage/lcov.info:lcov
-            ${{github.workspace}}/api/coverage/.resultset.json:simplecov
-                    
