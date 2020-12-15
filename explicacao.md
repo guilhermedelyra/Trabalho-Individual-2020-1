@@ -330,6 +330,7 @@ jobs:
       - name: test_client
         run: docker-compose run -e "NODE_ENV=test" client
 ```
+</details>
 
 
 ### Coverage
@@ -417,7 +418,6 @@ jobs:
             ${{github.workspace}}/client/coverage/lcov.info:lcov
             ${{github.workspace}}/api/coverage/.resultset.json:simplecov              
 ```
-
 </details>
 
 
