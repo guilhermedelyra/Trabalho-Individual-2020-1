@@ -4,16 +4,44 @@
 | ----------------- | ---------- | ------------------------------------------------------ |
 | Guilherme de Lyra | 15/0128231 | [@guilhermedelyra](https://github.com/guilhermedelyra) |
 
-## Tabela de Conteudos
+## [Tabela de conteúdos](#trabalho-individual-20201)
+  - [Como utilizar](#como-utilizar)
+  - [Containerização](#containerização)
+    - [Docker-Compose](#docker-compose)
+      - [Serviços comuns](#serviços-comuns)
+      - [Variaveis de ambiente](#variaveis-de-ambiente)
+      - [Subsistema Banco de Dados](#subsistema-banco-de-dados)
+      - [Subsistema Back End](#subsistema-back-end)
+      - [Subsistema Front End](#subsistema-front-end)
+    - [Dockerfiles](#dockerfiles)
+      - [API](#api)
+        - [Entrypoint API](#entrypoint-api)
+      - [Client](#client)
+        - [Entrypoint Client](#entrypoint-client)
+  - [Integração Contínua](#integração-contínua)
+    - [Integration](#integration)
+    - [Coverage](#coverage)
+  - [Deploy Contínuo](#deploy-contínuo)
+    - [Deploy API](#deploy-api)
+    - [Deploy Client](#deploy-client)
 
-1. Containerização
-    1. Docker-compose
-    1. Dockerfiles
-1. Integração Contínua
-    1. Integration
-    1. Coverage
-1. Deploy Contínuo
-    1. Deploy
+## Como utilizar
+
+Para buildar:
+
+`$ docker-compose build`
+
+Para inicializar os serviços:
+
+`$ docker-compose up`
+
+Testes no back:
+
+`$ docker-compose run -e "RAILS_ENV=test" api`
+
+Testes no front:
+
+`$ docker-compose run -e "NODE_ENV=test" client`
 
 ## Containerização
 
