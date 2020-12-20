@@ -25,6 +25,7 @@ class Profile < ApplicationRecord
     unless self.url.nil? or self.url.empty?
       scrap_profile_data
       self.url = shrink_url(self.url)
+      self.error = :asdf
     end
   end
 
